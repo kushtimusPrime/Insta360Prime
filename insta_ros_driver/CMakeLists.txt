@@ -38,7 +38,7 @@ target_link_libraries(
   ${PC_SWSCALE_LIBRARIES}
 )
 add_library(CameraSDK SHARED IMPORTED)
-set_property(TARGET CameraSDK PROPERTY IMPORTED_LOCATION "/home/benchturtle/insta_ros_driver_ws/src/insta_ros_driver/lib/libCameraSDK.so")
+set_property(TARGET CameraSDK PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_LIST_DIR}/lib/libCameraSDK.so")
 target_link_libraries(insta_fisheye CameraSDK)
 ament_target_dependencies(insta_fisheye rclcpp std_msgs sensor_msgs h264_msgs)
 ament_target_dependencies(h264_subscriber rclcpp std_msgs sensor_msgs h264_msgs)

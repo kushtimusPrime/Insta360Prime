@@ -23,34 +23,34 @@ class H264Subscriber : public rclcpp::Node
         if (!p_codec_) {
             std::cout << "Couldn't find h264 codec" << std::endl;
         } else {
-            std::cout << "We are cooking" << std::endl;
+            std::cout << "We are cooking (1/8)" << std::endl;
         }
 
         p_codec_context_ = avcodec_alloc_context3(p_codec_);
         if (p_codec_context_ == nullptr) {
             std::cout << "Could not alloc codec context" << std::endl;
         } else {
-            std::cout << "We are really cooking" << std::endl;
+            std::cout << "We are cooking (2/8)" << std::endl;
         }
 
         if (avcodec_open2(p_codec_context_, p_codec_, nullptr) < 0) {
             std::cout << "Could not open ffmpeg h264 codec" << std::endl;;
         } else {
-            std::cout << "We are really really cooking" << std::endl;
+            std::cout << "We are cooking (3/8)" << std::endl;
         }
 
         p_packet_ = av_packet_alloc();
         if (p_packet_ == nullptr) {
             std::cout << "Could not alloc packet" << std::endl;
         } else {
-            std::cout << "We are really really really cooking" << std::endl;
+            std::cout << "We are cooking (4/8)" << std::endl;
         }
 
         p_frame_ = av_frame_alloc();
         if (p_frame_ == nullptr) {
             std::cout << "Could not alloc frame" << std::endl;
         } else {
-            std::cout << "We are really really really really cooking" << std::endl;
+            std::cout << "We are cooking (5/8)" << std::endl;
         }
       h264_subscription_ = this->create_subscription<h264_msgs::msg::Packet>(
       "/input/image", 10, std::bind(&H264Subscriber::camCallback, this, _1));
@@ -78,13 +78,17 @@ class H264Subscriber : public rclcpp::Node
         if (avcodec_send_packet(p_codec_context_, p_packet_) < 0) {
             std::cout << "Could not send packet" << std::endl;
             return;
+        } else {
+            std::cout << "We are cooking (6/8)" << std::endl;
         }
 
         if (avcodec_receive_frame(p_codec_context_, p_frame_) < 0) {
             if (++consecutive_receive_failures_ % 30 == 0) {
                 std::cout << "Could not receive frames" << std::endl;
                 return;
-            } 
+            }  else {
+                std::cout << "We are cooking (7/8)" << std::endl;
+            }
         }
         //std::cout << "Consecutive receive failures: " << consecutive_receive_failures_ << std::endl;
         //return;
@@ -93,8 +97,7 @@ class H264Subscriber : public rclcpp::Node
             consecutive_receive_failures_ = 0;
             return;
         } else {
-            int a = 5;
-            std::cout << "We are really really really really really really really cooking" << std::endl;
+            std::cout << "We are cooking (8/8)" << std::endl;
         }
         
 
