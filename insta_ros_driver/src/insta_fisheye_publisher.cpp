@@ -14,7 +14,8 @@
 
 #include <chrono>
 #include <memory>
-
+#include <typeinfo>
+#include <cxxabi.h>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
@@ -107,10 +108,21 @@ public:
         std::cout << "on audio data:" << std::endl;
     }
     void OnVideoData(const uint8_t* data, size_t size, int64_t timestamp, uint8_t streamType, int stream_index = 0) override {
+        /*for(int i = 0;i < size;i++) {
+            std::cout << data[i];
+        }*/
         h264_msgs::msg::Packet h264_msg;
         h264_msg.header.frame_id = "camera_frame";
         h264_msg.seq = seq_++;
-        h264_msg.data.insert(h264_msg.data.end(), data[0], data[size]);
+        //h264_msg.data.insert(h264_msg.data.end(), data[0], data[size]);
+        uint8_t test_data[] = {1,2,3,4,5};
+        uint8_t *test_data_ptr = test_data;
+        // for(int i = 0;i < 5;i++) {
+        //     std::cout << test_data_ptr[i];
+        // }
+        // std::cout << std::endl;
+        //h264_msg.data.insert(h264_msg.data.end(),test_data_ptr[0],test_data_ptr[5]);
+        h264_msg.data.insert(h264_msg.data.end(), &data[0], &data[size]);
         auto stamp = rclcpp::Node::now();
         h264_msg.header.stamp = stamp;
         if (stream_index == 0) {

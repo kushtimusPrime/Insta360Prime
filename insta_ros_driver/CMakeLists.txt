@@ -11,7 +11,15 @@ include_directories (include)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(h264_msgs REQUIRED)
+
+find_package(PkgConfig)
+pkg_check_modules(PC_AVDEVICE REQUIRED libavdevice>=58)
+pkg_check_modules(PC_AVFORMAT REQUIRED libavformat>=58)
+pkg_check_modules(PC_AVCODEC REQUIRED libavcodec>=58)
+pkg_check_modules(PC_AVUTIL REQUIRED libavutil>=56)
+pkg_check_modules(PC_SWSCALE REQUIRED libswscale>=5)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -20,14 +28,30 @@ find_package(h264_msgs REQUIRED)
 set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
 
 add_executable(insta_fisheye src/insta_fisheye_publisher.cpp)
+add_executable(h264_subscriber src/h264_subscriber.cpp)
+target_link_libraries(
+  h264_subscriber
+  ${PC_AVDEVICE_LIBRARIES}
+  ${PC_AVFORMAT_LIBRARIES}
+  ${PC_AVCODEC_LIBRARIES}
+  ${PC_AVUTIL_LIBRARIES}
+  ${PC_SWSCALE_LIBRARIES}
+)
 add_library(CameraSDK SHARED IMPORTED)
 set_property(TARGET CameraSDK PROPERTY IMPORTED_LOCATION "/home/benchturtle/insta_ros_driver_ws/src/insta_ros_driver/lib/libCameraSDK.so")
 target_link_libraries(insta_fisheye CameraSDK)
-ament_target_dependencies(insta_fisheye rclcpp std_msgs h264_msgs)
+ament_target_dependencies(insta_fisheye rclcpp std_msgs sensor_msgs h264_msgs)
+ament_target_dependencies(h264_subscriber rclcpp std_msgs sensor_msgs h264_msgs)
 
 install(TARGETS
   insta_fisheye
+  h264_subscriber
   DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
+)
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
