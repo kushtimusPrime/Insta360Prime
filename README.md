@@ -6,6 +6,7 @@ This repo can be built in a ROS2 humble workspace, so that when an Insta360 ONE 
 ## Installation and Setup
 It should just work with the default Ubuntu 22.04 setup, but I could be missing something.
 ```
+sudo apt-get install libavdevice-dev
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
 git clone https://github.com/kushtimusPrime/Insta360Prime.git src
